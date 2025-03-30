@@ -44,7 +44,6 @@ impl Generate {
     }
 
     // Recursive function to fill a grid with numbers using backtracking.
-    // We use usize for row and col for easier indexing.
     fn fill_grid(&mut self, row: usize, col: usize) -> bool {
         // If we have filled all rows, the grid is complete.
         if row == 9 {
@@ -91,6 +90,7 @@ impl Generate {
         false
     }
 
+    // This will NOT result in unique solution all the time
     fn remove_numbers(&mut self) {
         let mut cells_to_remove: u8 = rand::rng().random_range(35..=55);
 
@@ -103,5 +103,16 @@ impl Generate {
                 cells_to_remove -= 1;
             }
         }
+    }
+}
+
+pub struct SolveGrid {
+    g_grid: [[u8; 9]; 9],
+}
+
+impl SolveGrid {
+    pub fn solve(grid: [[u8; 9]; 9]) -> Self {
+        let instance = SolveGrid { g_grid: grid };
+        instance
     }
 }
