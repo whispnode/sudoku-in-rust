@@ -1,10 +1,9 @@
 use solver::backtrack;
-
-mod cell;
+use solver::cell::Cell;
+use solver::utils::can_place;
 
 pub struct Board {
-    grid: [[cell::Cell; 9]; 9],
-    // g_grid: [[u8; 9]; 9], // generated grid
+    grid: [[Cell; 9]; 9],
     pub error_cells: Vec<(u8, u8)>,
     pub is_solved: bool,
     pub mistakes: i32,
@@ -16,13 +15,13 @@ impl Board {
         let generate_board = backtrack::Generate::new();
 
         // Create a new board grid with default cells.
-        let mut grid = [[cell::Cell::default(); 9]; 9];
+        let mut grid = [[Cell::default(); 9]; 9];
 
-        // Iterate over the indices to assign positions, values, and fixed flags.
+        // Iterate over the indices to assign values, and fixed flags.
         for i in 0..9 {
             for j in 0..9 {
                 let value = generate_board.g_grid[i][j];
-                grid[i][j] = cell::Cell {
+                grid[i][j] = Cell {
                     value,
                     is_fixed: value != 0,
                 };
@@ -31,7 +30,6 @@ impl Board {
 
         Board {
             grid,
-            // g_grid: generate_board.g_grid,
             error_cells: Vec::new(),
             is_solved: false,
             mistakes: 0,
@@ -53,33 +51,6 @@ impl Board {
         }
     }
 
-    fn can_place(&self, row: u8, col: u8, num: u8) -> bool {
-        let row = row as usize;
-        let col = col as usize;
-
-        // Check the row and column for repeats
-        for i in 0..9 {
-            if self.grid[row][i].value == num || self.grid[i][col].value == num {
-                return false;
-            }
-        }
-
-        // Determine the top left corner of the smaller 3x3 grid of the g_grid
-        let box_row = row - (row % 3);
-        let box_col = col - (col % 3);
-
-        // Check the smaller 3x3 grids of the g_grid
-        for i in 0..3 {
-            for j in 0..3 {
-                if self.grid[box_row + i][box_col + j].value == num {
-                    return false;
-                }
-            }
-        }
-
-        true
-    }
-
     fn check_errors(&mut self, value: u8, position: (u8, u8)) {
         let in_error_cells = self.error_cells.contains(&position);
 
@@ -94,7 +65,7 @@ impl Board {
             return;
         }
 
-        if self.can_place(position.0, position.1, value) {
+        if can_place(&self.grid, position.0, position.1, value) {
             if in_error_cells {
                 self.error_cells.retain(|&e| e != position);
             }
@@ -120,7 +91,7 @@ impl Board {
         }
     }
 
-    pub fn has_filled_cells(&self) -> bool {
+    fn has_filled_cells(&self) -> bool {
         for row in self.grid {
             for cell in row {
                 if cell.value == 0 {
