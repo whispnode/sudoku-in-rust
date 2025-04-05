@@ -1,5 +1,5 @@
 use super::utils::can_place;
-use rand::Rng;
+use super::utils::remove_numbers;
 use rand::seq::SliceRandom;
 
 pub struct Generate {
@@ -12,23 +12,8 @@ impl Generate {
             g_grid: [[0u8; 9]; 9],
         };
         fill_grid(&mut instance.g_grid, 0, 0, true);
-        instance.remove_numbers();
+        remove_numbers(&mut instance.g_grid);
         instance
-    }
-
-    // This will NOT result in unique solution all the time
-    fn remove_numbers(&mut self) {
-        let mut cells_to_remove: u8 = rand::rng().random_range(35..=55);
-
-        while cells_to_remove > 0 {
-            let row: usize = rand::rng().random_range(0..=8);
-            let col: usize = rand::rng().random_range(0..=8);
-
-            if self.g_grid[row][col] != 0 {
-                self.g_grid[row as usize][col as usize] = 0;
-                cells_to_remove -= 1;
-            }
-        }
     }
 }
 
