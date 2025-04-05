@@ -2,7 +2,6 @@
 pub struct Cell {
     pub value: u8,
     pub is_fixed: bool,
-    pub position: (u8, u8),
 }
 
 impl Default for Cell {
@@ -10,7 +9,6 @@ impl Default for Cell {
         Cell {
             value: 0,
             is_fixed: false,
-            position: (9, 9),
         }
     }
 }
