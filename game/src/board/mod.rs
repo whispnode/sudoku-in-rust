@@ -4,6 +4,7 @@ mod cell;
 
 pub struct Board {
     grid: [[cell::Cell; 9]; 9],
+    // g_grid: [[u8; 9]; 9], // generated grid
     pub error_cells: Vec<(u8, u8)>,
     pub is_solved: bool,
     pub mistakes: i32,
@@ -22,7 +23,6 @@ impl Board {
             for j in 0..9 {
                 let value = generate_board.g_grid[i][j];
                 grid[i][j] = cell::Cell {
-                    position: (i as u8, j as u8),
                     value,
                     is_fixed: value != 0,
                 };
@@ -31,6 +31,7 @@ impl Board {
 
         Board {
             grid,
+            // g_grid: generate_board.g_grid,
             error_cells: Vec::new(),
             is_solved: false,
             mistakes: 0,
@@ -114,7 +115,7 @@ impl Board {
         if !self.grid[position.0 as usize][position.1 as usize].is_fixed {
             self.grid[position.0 as usize][position.1 as usize].value = value;
         } else {
-            println!("\ncell at {:?} is fixed", position);
+            println!("\nCell at {:?} is fixed", position);
             return;
         }
     }
